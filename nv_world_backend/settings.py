@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nv_profile',
     'nv_service',
+    'nv_projects',
     'rest_framework',
     'corsheaders'
 ]

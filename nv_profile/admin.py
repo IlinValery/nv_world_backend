@@ -32,3 +32,8 @@ class UserAdmin(OriginalUserAdmin):
 @admin.register(NVRoom)
 class NVRoomAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(NVSkill)
+class NVSkillAdmin(admin.ModelAdmin):
+    pass
+

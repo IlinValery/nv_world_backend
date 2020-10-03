@@ -4,10 +4,17 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserManager, User, PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 
+from nv_profile.manager import CustomUserManager
+
 
 class NVRoom(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
+    link = models.CharField(max_length=255, blank=True, null=True)
     sprite = models.FileField(upload_to='rooms')
+
+    class Meta:
+        verbose_name = "room"
+        verbose_name_plural = "rooms"
 
     def __str__(self):
         return str(self.title)
@@ -16,44 +23,12 @@ class NVRoom(models.Model):
 class NVSkill(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
 
+    class Meta:
+        verbose_name = "skill"
+        verbose_name_plural = "skills"
+
     def __str__(self):
         return str(self.title)
-
-
-class CustomUserManager(BaseUserManager):
-    def _create_user(self, username, **extra_fields):
-        user = self.model(username=username, **extra_fields)
-        user.set_unusable_password()
-
-
-        user.save()
-
-        return user
-
-    def _create_super_user(self, username, password, **extra_fields):
-        user = self.model(username=username, **extra_fields)
-        user.set_unusable_password()
-        # user.set_password(password)
-        user.save()
-        return user
-
-    def create_user(self, username, **extra_fields):
-        """Create and save a regular User with the given email and password."""
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, **extra_fields)
-
-    def create_superuser(self, username, password, **extra_fields):
-        """Create and save a SuperUser with the given email and password."""
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        print(extra_fields)
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
-
-        return self._create_super_user(username=username, password=password, **extra_fields)
 
 
 class NVUserProfile(AbstractUser):
@@ -63,6 +38,7 @@ class NVUserProfile(AbstractUser):
     photo = models.ImageField(upload_to='user_photos')
 
     is_team_lead = models.BooleanField(default=False)
+    is_male = models.BooleanField(default=True)
     cartoon_sprite = models.FileField(upload_to='user_avatars', blank=True, null=True)
 
     report_to = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
