@@ -3,6 +3,8 @@ written with django-rest framework
 ## initial setup
 **server with backend url:** TODO
  
+ deployment path: /var/www/nv_world_backend
+ use sftp to connect in pycharm
 ## database configuration
 
 ```bash
