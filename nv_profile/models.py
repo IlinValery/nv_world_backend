@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserM
 from django.utils.translation import ugettext_lazy as _
 
 from nv_profile.manager import CustomUserManager
+from datetime import datetime
 
 
 class NVRoom(models.Model):
@@ -43,6 +44,8 @@ class NVUserProfile(AbstractUser):
 
     report_to = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     current_room = models.ForeignKey(NVRoom, on_delete=models.CASCADE, blank=True, null=True)
+    last_active_room = models.DateTimeField(default=datetime.now, blank=True)
+
     skills = models.ManyToManyField(NVSkill, through='UserSkills')
 
     USERNAME_FIELD = 'username'

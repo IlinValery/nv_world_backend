@@ -23,7 +23,7 @@ class RolesInProject(models.Model):
     user = models.ForeignKey(NVUserProfile, on_delete=models.CASCADE)
     project = models.ForeignKey(NVProject, on_delete=models.CASCADE)
 
-    class RolesInProject(models.TextChoices):
+    class RolesInProjectNames(models.TextChoices):
         PROJECTMANAGER = 'PM', _('Project manager')
         ANALYST = 'AL', _('Analyst')
         LEADANALYST = 'LA', _('Lead Analyst')
@@ -35,9 +35,12 @@ class RolesInProject(models.Model):
 
     role = models.CharField(
         max_length=2,
-        choices=RolesInProject.choices,
-        default=RolesInProject.DEVELOPER,
+        choices=RolesInProjectNames.choices,
+        default=RolesInProjectNames.DEVELOPER,
     )
+
+    def __str__(self):
+        return str(self.user.username) + " - " + str(self.project.name) + " - " + str(self.role)
 
 
 class NVTask(models.Model):
