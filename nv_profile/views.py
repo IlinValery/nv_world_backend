@@ -109,7 +109,7 @@ class UserView(APIView, PageNumberPagination):
                     user.current_room = rooms[0]
             user.save()
 
-        user_skills = UserSkills.objects.filter(user=user)
+        user_skills = UserSkills.objects.filter(user=user).order_by('-score')[:4]
         if user:
             serializer_user = UserSerializer(instance=user)
             serializer_roles = UserRolesInTeamSerializer(instance=user_roles, many=True)
@@ -145,7 +145,10 @@ class CurrentRoomView(APIView):
         return Response(data)
 
 
-class SkillsView(APIView):
+class SkillsUsedView(APIView):
+    """
+    return list of used skills
+    """
 
     def get(self, request):
         skills_unique = UserSkills.objects.all().distinct('skill')
@@ -153,3 +156,29 @@ class SkillsView(APIView):
         for skill_info in skills_unique:
             skills.append(skill_info.skill)
         return Response({"skills": SkillSerializer(skills, many=True).data})
+
+
+class SkillsAllView(APIView):
+    """
+    return list of all skills
+    """
+
+    def get(self, request):
+        skills = NVSkill.objects.all()
+        return Response({"skills": SkillSerializer(skills, many=True).data})
+
+class UpproveSkillToUser(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id", "")
+        skill_id = request.data.get("skill_id", "")
+        score = request.data.get("amount", "")
+        try:
+            currents_skill = UserSkills.objects.get(user_id=user_id, skill_id=skill_id)
+            currents_skill.score+=score
+            currents_skill.save()
+        except:
+            UserSkills.objects.create(user_id=user_id, skill_id=skill_id, score=score)
+        # print(currents_skill)
+
+        print(user_id, skill_id, score)
+        return Response("Updated", status=status.HTTP_200_OK)
